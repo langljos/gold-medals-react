@@ -69,18 +69,24 @@ class App extends Component {
       newCombinedTotal = mutableCombinedTotal = mutableCombinedTotal + 1
       this.setState({ countryTotal: newCountryTotal})
       this.setState({ combinedTotal: newCombinedTotal})
+      localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal))
     } else if (!addOrSubract){
       newCountryTotal = mutableCountry.countryTotal = mutableCountry.countryTotal - 1
       newCombinedTotal = mutableCombinedTotal = mutableCombinedTotal - 1
       this.setState({ countryTotal: newCountryTotal})
       this.setState({ combinedTotal: newCombinedTotal})
+      localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal))
     }
   }
 
   componentDidMount() {
     const storedCountries = localStorage.getItem('countries');
+    const storedCombinedTotals = localStorage.getItem('combinedTotal');
     if (storedCountries) {
       this.setState({ countries: JSON.parse(storedCountries) });
+    }
+    if (storedCombinedTotals) {
+      this.setState({ countries: JSON.parse(storedCombinedTotals) });
     }
   }
 
