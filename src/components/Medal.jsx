@@ -1,58 +1,35 @@
 import React, { Component } from 'react';
-import Card from '@mui/material/Card';
-import { CardContent, Typography } from '@mui/material';
-import Icon from '@mui/material/Icon';
-import Box from '@mui/material/Box';
+import { CardContent, Typography, Grid } from '@mui/material';
+import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 
-class Country extends Component {
-    state = {
-        medalType: [
-          { type: 'bronze' },
-          { type: 'silver' },
-          { type: 'gold' },
-        ]
-      }
-
-    handleIncrement = () => {
-    this.setState({ goldMedalCount: this.state.goldMedalCount + 1 })
-  }
-  
-  render() { 
-    const incrementGold = this.props.incrementGold
-    const country = this.props
+class Medal extends Component {
+  render() {
+    const medal = this.props
+    const countryName = this.props.countryName
+    const addMedal = this.props.addMedal
+    const removeMedal = this.props.removeMedal
 
     return (
-        
-      <Box
-      component="span"
-      sx={{ display: 'inline-block', mx: '12px', transform: 'scale(1.0)' }}
-    >
-        <Card 
-        sx={{
-          bgcolor: '#e20000',
-          minWidth: 275,
-          color: '#FFFFFF',
-          mt: 10
-        }}>
-          <CardContent>
-            <Typography variant="h5" component="div">
-              { country.name }
-            </Typography>
-            <Typography>
-              Gold Medals { country.goldMedalCount }
-            </Typography>
-            <Typography sx={{color: '#1976d2'}}>
-              <Icon onClick={ () => incrementGold(country.id) } className='Country'>add_circle</Icon>
 
+      <CardContent>
+        <Grid container>
+          <Grid item xs={4}>
+            <Typography variant="h5" sx={{ color: medal.color }}>{medal.total}</Typography>
+          </Grid>
+          <Grid item xs={4}>
+            <Typography variant="h5" sx={{ color: medal.color }}>{medal.type}</Typography>
+          </Grid>
+          <Grid item xs={4}>
+            <Typography fontWeight="fontWeightBold">
+              <AddBoxOutlinedIcon sx={{ color: '#00FF00' }} className='Medal' onClick={() => addMedal(countryName, medal.type)}></AddBoxOutlinedIcon>
+              <IndeterminateCheckBoxOutlinedIcon sx={{ color: '#FF0000' }} className='Medal' onClick={() => removeMedal(countryName, medal.type)}></IndeterminateCheckBoxOutlinedIcon>
             </Typography>
-          </CardContent>
-        </Card>
-
-        </Box>
-          
-        
-      );
-    }
+          </Grid>
+        </Grid>
+      </CardContent>
+    );
+  }
 }
 
-export default Country
+export default Medal

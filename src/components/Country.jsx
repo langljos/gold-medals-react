@@ -1,47 +1,51 @@
 import React, { Component } from 'react';
 import Card from '@mui/material/Card';
 import { CardContent, Typography } from '@mui/material';
-import Icon from '@mui/material/Icon';
 import Box from '@mui/material/Box';
+import Medal from './Medal';
 
 class Country extends Component {
-
-  render() { 
-    const incrementGold = this.props.incrementGold
+  render() {
     const country = this.props
-
+    // console.log(country)
+    // console.log(country.countryTotal)
     return (
-        
       <Box
-      component="span"
-      sx={{ display: 'inline-block', mx: '12px', transform: 'scale(1.0)' }}
-    >
-        <Card 
-        sx={{
-          bgcolor: '#e20000',
-          minWidth: 275,
-          color: '#FFFFFF',
-          mt: 2
-        }}>
+        component="span"
+        sx={{ display: 'inline-block', mx: '12px', transform: 'scale(1.0)' }}
+      >
+        <Card elevation={10} style={{ border: '3px solid black' }}
+          sx={{
+            bgcolor: '#7A7A7A',
+            minWidth: 275,
+            color: '#FFFFFF',
+            mt: 2
+          }}>
           <CardContent>
-            <Typography variant="h5" component="div">
-              { country.name }
-            </Typography>
-            <Typography>
-              Gold Medals { country.goldMedalCount }
-            </Typography>
-            <Typography sx={{color: '#1976d2'}}>
-              <Icon onClick={ () => incrementGold(country.id) } className='Country'>add_circle</Icon>
 
+            <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
+              {country.name}
             </Typography>
+
+            <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
+              {country.countryTotal}
+            </Typography>
+
+            {country.medals.map(medal =>
+              <Medal
+                key={medal.type}
+                type={medal.type}
+                color={medal.color}
+                total={medal.total}
+                countryName={country.name}
+                addMedal={country.addMedal}
+                removeMedal={country.removeMedal}
+              />)}
           </CardContent>
         </Card>
-
-        </Box>
-          
-        
-      );
-    }
+      </Box>
+    );
+  }
 }
 
 export default Country
