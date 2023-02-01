@@ -5,7 +5,18 @@ import Icon from '@mui/material/Icon';
 import Box from '@mui/material/Box';
 
 class Country extends Component {
+    state = {
+        medalType: [
+          { type: 'bronze' },
+          { type: 'silver' },
+          { type: 'gold' },
+        ]
+      }
 
+    handleIncrement = () => {
+    this.setState({ goldMedalCount: this.state.goldMedalCount + 1 })
+  }
+  
   render() { 
     const incrementGold = this.props.incrementGold
     const country = this.props
@@ -21,7 +32,7 @@ class Country extends Component {
           bgcolor: '#e20000',
           minWidth: 275,
           color: '#FFFFFF',
-          mt: 2
+          mt: 10
         }}>
           <CardContent>
             <Typography variant="h5" component="div">
