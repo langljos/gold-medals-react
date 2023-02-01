@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import Country from './components/Country';
 import './App.css';
-import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
+import { Typography, Box, Button, Container } from '@mui/material';
 
 class App extends Component {
   state = {
@@ -28,7 +27,8 @@ class App extends Component {
           { type: 'Gold', total: 0, color: '#FFD700' },
         ]
       },
-    ]
+    ],
+    combinedTotal: 19
   }
 
   addMedal = (countryName, medalType) => {
@@ -62,12 +62,18 @@ class App extends Component {
   computeTotals = (addOrSubract, countriesMutable, countryIdx) => {
     var mutableCountry = countriesMutable[countryIdx]
     var newCountryTotal
+    var mutableCombinedTotal = this.state.combinedTotal
+    var newCombinedTotal
     if (addOrSubract){
       newCountryTotal = mutableCountry.countryTotal = mutableCountry.countryTotal + 1
+      newCombinedTotal = mutableCombinedTotal = mutableCombinedTotal + 1
       this.setState({ countryTotal: newCountryTotal})
+      this.setState({ combinedTotal: newCombinedTotal})
     } else if (!addOrSubract){
       newCountryTotal = mutableCountry.countryTotal = mutableCountry.countryTotal - 1
+      newCombinedTotal = mutableCombinedTotal = mutableCombinedTotal - 1
       this.setState({ countryTotal: newCountryTotal})
+      this.setState({ combinedTotal: newCombinedTotal})
     }
   }
 
@@ -86,6 +92,21 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+
+      <Box sx={{
+        height: 100,
+        backgroundColor: 'primary.dark',
+        '&:hover': {
+          backgroundColor: 'primary.main',
+          opacity: [0.9, 0.8, 0.7],
+        },
+      }}>
+        <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
+              Olympic Medals {this.state.combinedTotal}
+        </Typography>
+
+      </Box>
+
         <Container>
           {this.state.countries.map(country =>
             <Country
