@@ -32,61 +32,63 @@ class App extends Component {
   }
 
   addMedal = (countryName, medalType) => {
-    const countriesMutable = this.state.countries
-    const countryIdx = countriesMutable.findIndex(country => country.name === countryName)
-    const medalsMutable = countriesMutable[countryIdx].medals
-    medalsMutable.findIndex(medal => medal.type === medalType)
-    const medalsIdx = medalsMutable.findIndex(medal => medal.type === medalType)
-    medalsMutable[medalsIdx].total += 1
-    this.computeTotals(true, countriesMutable, countryIdx)
-    this.setState({ medals: medalsMutable })
-    localStorage.setItem('countries', JSON.stringify(this.state.countries))
+    const countriesMutable = this.state.countries;
+    const countryIdx = countriesMutable.findIndex(country => country.name === countryName);
+    const medalsMutable = countriesMutable[countryIdx].medals;
+    medalsMutable.findIndex(medal => medal.type === medalType);
+    const medalsIdx = medalsMutable.findIndex(medal => medal.type === medalType);
+    medalsMutable[medalsIdx].total += 1;
+    this.computeTotals(true, countriesMutable, countryIdx);
+    this.setState({ medals: medalsMutable });
+    localStorage.setItem('countries', JSON.stringify(this.state.countries));
   }
 
   removeMedal = (countryName, medalType) => {
-    const countriesMutable = this.state.countries
-    const countryIdx = countriesMutable.findIndex(country => country.name === countryName)
-    const medalsMutable = countriesMutable[countryIdx].medals
-    medalsMutable.findIndex(medal => medal.type === medalType)
-    const medalsIdx = medalsMutable.findIndex(medal => medal.type === medalType)
+    const countriesMutable = this.state.countries;
+    const countryIdx = countriesMutable.findIndex(country => country.name === countryName);
+    const medalsMutable = countriesMutable[countryIdx].medals;
+    medalsMutable.findIndex(medal => medal.type === medalType);
+    const medalsIdx = medalsMutable.findIndex(medal => medal.type === medalType);
     if (medalsMutable[medalsIdx].total !== 0) {
-      medalsMutable[medalsIdx].total -= 1
-      this.computeTotals(false, countriesMutable, countryIdx)
-      this.setState({ medals: medalsMutable })
-      localStorage.setItem('countries', JSON.stringify(this.state.countries))
+      medalsMutable[medalsIdx].total -= 1;
+      this.computeTotals(false, countriesMutable, countryIdx);
+      this.setState({ medals: medalsMutable });
+      localStorage.setItem('countries', JSON.stringify(this.state.countries));
     }
   }
 
   // accepts boolean, countriesMutable, and countryIdx from add and remove medal functions  -- true = add -- false = subtract
   // sets countriesMutable before medalsMutable in add and remove medal functions allowing a total medal count
   computeTotals = (addOrSubract, countriesMutable, countryIdx) => {
-    var mutableCountry = countriesMutable[countryIdx]
-    var newCountryTotal
-    var mutableCombinedTotal = this.state.combinedTotal
-    var newCombinedTotal
+    let mutableCountry = countriesMutable[countryIdx];
+    let newCountryTotal;
+    let mutableCombinedTotal = this.state.combinedTotal;
+    let newCombinedTotal;
     if (addOrSubract){
-      newCountryTotal = mutableCountry.countryTotal = mutableCountry.countryTotal + 1
-      newCombinedTotal = mutableCombinedTotal = mutableCombinedTotal + 1
-      this.setState({ countryTotal: newCountryTotal})
-      this.setState({ combinedTotal: newCombinedTotal})
-      localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal))
+      newCountryTotal = mutableCountry.countryTotal = mutableCountry.countryTotal + 1;
+      newCombinedTotal = mutableCombinedTotal = mutableCombinedTotal + 1;
+      this.setState({ countryTotal: newCountryTotal});
+      this.setState({ combinedTotal: newCombinedTotal});
+      localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
     } else if (!addOrSubract){
-      newCountryTotal = mutableCountry.countryTotal = mutableCountry.countryTotal - 1
-      newCombinedTotal = mutableCombinedTotal = mutableCombinedTotal - 1
-      this.setState({ countryTotal: newCountryTotal})
-      this.setState({ combinedTotal: newCombinedTotal})
-      localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal))
+      newCountryTotal = mutableCountry.countryTotal = mutableCountry.countryTotal - 1;
+      newCombinedTotal = mutableCombinedTotal = mutableCombinedTotal - 1;
+      this.setState({ countryTotal: newCountryTotal});
+      this.setState({ combinedTotal: newCombinedTotal});
+      localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
     }
   }
 
   componentDidMount() {
-    const storedCountries = localStorage.getItem('countries');
-    const storedCombinedTotals = localStorage.getItem('combinedTotal');
+    let storedCountries = localStorage.getItem('countries');
+    
+    let storedCombinedTotals = localStorage.getItem('combinedTotal');
+    
     if (storedCountries) {
-      this.setState({ countries: JSON.parse(storedCountries) });
+      this.setState({ countries: (JSON.parse(storedCountries)) });
     }
     if (storedCombinedTotals) {
-      this.setState({ countries: JSON.parse(storedCombinedTotals) });
+      this.setState({ combinedTotal: JSON.parse(storedCombinedTotals) });
     }
   }
 
@@ -110,11 +112,12 @@ class App extends Component {
         <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
               Olympic Medals {this.state.combinedTotal}
         </Typography>
+      
 
       </Box>
 
         <Container>
-          {this.state.countries.map(country =>
+          {this.state.countries.map((country) =>
             <Country
               key={country.id}
               id={country.id}
