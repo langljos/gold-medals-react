@@ -7,8 +7,7 @@ class Medal extends Component {
   render() {
     const medal = this.props
     const countryName = this.props.countryName
-    const addMedal = this.props.addMedal
-    const removeMedal = this.props.removeMedal
+    const changeMedal = this.props.changeMedal
 
     return (
 
@@ -22,8 +21,8 @@ class Medal extends Component {
           </Grid>
           <Grid item xs={4}>
             <Typography fontWeight="fontWeightBold">
-              <AddBoxOutlinedIcon sx={{ color: '#00FF00' }} className='Medal' onClick={() => addMedal(countryName, medal.type)}></AddBoxOutlinedIcon>
-              <IndeterminateCheckBoxOutlinedIcon sx={{ color: '#FF0000' }} className='Medal' onClick={() => removeMedal(countryName, medal.type)}></IndeterminateCheckBoxOutlinedIcon>
+              <AddBoxOutlinedIcon sx={{ color: '#00FF00' }} className='Medal' onClick={() => changeMedal(countryName, medal.type, 1)}></AddBoxOutlinedIcon>
+              <IndeterminateCheckBoxOutlinedIcon sx={{ color: '#FF0000' }} className='Medal' onClick={() => changeMedal(countryName, medal.type, -1)}></IndeterminateCheckBoxOutlinedIcon>
             </Typography>
           </Grid>
         </Grid>

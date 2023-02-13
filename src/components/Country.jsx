@@ -7,8 +7,6 @@ import Medal from './Medal';
 class Country extends Component {
   render() {
     const country = this.props
-    // console.log(country)
-    // console.log(country.countryTotal)
     return (
       <Box
         component="span"
@@ -38,8 +36,7 @@ class Country extends Component {
                 color={medal.color}
                 total={medal.total}
                 countryName={country.name}
-                addMedal={country.addMedal}
-                removeMedal={country.removeMedal}
+                changeMedal={country.changeMedal}
               />)}
           </CardContent>
         </Card>
