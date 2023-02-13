@@ -85,12 +85,11 @@ class App extends Component {
       <div className="App">
 
       <Box sx={{
-        height: 100,
+        height: 50,
         backgroundColor: 'primary.dark',
-        '&:hover': {
-          backgroundColor: 'primary.main',
-          opacity: [0.9, 0.8, 0.7],
-        },
+        alignItems: 'center',
+        justifyContent: "center",
+        display: "flex",
       }}>
         <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
               Olympic Medals {this.state.combinedTotal}
