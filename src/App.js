@@ -2,33 +2,34 @@ import React, { Component } from 'react'
 import Country from './components/Country';
 import './App.css';
 import { Typography, Box, Button, Container } from '@mui/material';
+import NewCountry from './components/NewCountry';
 
 class App extends Component {
   state = {
     countries: [
       {
         id: 1, name: 'United States', countryTotal: 8, medals: [
-          { type: 'Bronze', total: 2, color: '#654321' },
-          { type: 'Silver', total: 2, color: '#C0C0C0' },
-          { type: 'Gold', total: 4, color: '#FFD700' },
+          { type: 'Bronze', total: 2 },
+          { type: 'Silver', total: 2 },
+          { type: 'Gold', total: 4 },
         ]
       },
       {
         id: 2, name: 'China', countryTotal: 7, medals: [
-          { type: 'Bronze', total: 2, color: '#654321' },
-          { type: 'Silver', total: 3, color: '#C0C0C0' },
-          { type: 'Gold', total: 2, color: '#FFD700' },
+          { type: 'Bronze', total: 2 },
+          { type: 'Silver', total: 3 },
+          { type: 'Gold', total: 2 },
         ]
       },
       {
         id: 3, name: 'Germany', countryTotal: 4, medals: [
-          { type: 'Bronze', total: 1, color: '#654321' },
-          { type: 'Silver', total: 3, color: '#C0C0C0' },
-          { type: 'Gold', total: 0, color: '#FFD700' },
+          { type: 'Bronze', total: 1 },
+          { type: 'Silver', total: 3 },
+          { type: 'Gold', total: 0 },
         ]
       },
     ],
-    combinedTotal: 19,
+    combinedTotal: 19
 
   }
 
@@ -80,6 +81,7 @@ class App extends Component {
     window.location.reload()
   }
 
+
   render() {
     return (
       <div className="App">
@@ -107,10 +109,10 @@ class App extends Component {
               medals={country.medals}
               countryTotal={country.countryTotal}
               changeMedal={this.changeMedal}
-              computeTotals={this.computeTotals}
             />)}
         </Container>
         <Button elevation={10} variant="contained" color="primary" onClick={this.clearLocalStorage}>Reset All</Button>
+        <NewCountry onAdd={ this.handleAdd } />
       </div>
     );
   }

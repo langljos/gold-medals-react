@@ -7,6 +7,8 @@ import Medal from './Medal';
 class Country extends Component {
   render() {
     const country = this.props
+    const changeMedal = this.props.changeMedal
+
     return (
       <Box
         component="span"
@@ -36,7 +38,7 @@ class Country extends Component {
                 color={medal.color}
                 total={medal.total}
                 countryName={country.name}
-                changeMedal={country.changeMedal}
+                changeMedal={changeMedal}
               />)}
           </CardContent>
         </Card>
