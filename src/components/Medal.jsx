@@ -12,7 +12,7 @@ const colors = [
 class Medal extends Component {
 
   setColor(medalType){
-    return colors.find(c => c.type == medalType).color
+    return colors.find(c => c.type === medalType).color
   }
 
   render() {

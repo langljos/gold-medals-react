@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from '@mui/material';
 
-const countryNameColor = '#000000';
 const country = {id: 0, name: '', countryTotal: 0, medals: [
     { type: 'Bronze', total: 0 },
     { type: 'Silver', total: 0 },
