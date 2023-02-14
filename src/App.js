@@ -34,6 +34,7 @@ class App extends Component {
   }
 
   changeMedal = (countryName, medalType, value) => {
+    value = parseInt(value);
     // instantiates a new combinedTotal
     let combinedTotalMutable = this.state.combinedTotal
     // instantiates a new list of countries
@@ -44,20 +45,26 @@ class App extends Component {
     let countryMutable = countriesMutable[countryIdx];
     // gets the medal index for the specific medal interacted with
     let medalsIdx = countryMutable.medals.findIndex(medal => medal.type === medalType);
+
+    let total = parseInt(countryMutable.medals[medalsIdx].total);
+    let countryTotal = parseInt(countryMutable.countryTotal);
    
-    if (countryMutable.medals[medalsIdx].total > 0 || value === 1){
-      countryMutable.medals[medalsIdx].total += value;
+    if (total > 0 || value === 1){
+      total = total + value;
+      countryMutable.medals[medalsIdx].total = total
       this.setState({ medals: countryMutable.medals });
 
-      if (countryMutable.countryTotal > 0 || value === 1){
-        countryMutable.countryTotal += value;
+      if (countryTotal > 0 || value === 1){
+        countryTotal = countryTotal + value;
+        countryMutable.countryTotal = countryTotal;
         this.setState({ countryTotal: countryMutable.countryTotal});
       }
 
       if (combinedTotalMutable > 0 || value === 1){
-        combinedTotalMutable += value;
+        combinedTotalMutable = combinedTotalMutable + value;
         this.setState({ combinedTotal: combinedTotalMutable});
       }
+      
     }
     localStorage.setItem('countries', JSON.stringify(this.state.countries));
     localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
@@ -81,6 +88,19 @@ class App extends Component {
     window.location.reload()
   }
 
+  
+  handleAdd = (country) => {
+    const allCountries = this.state.countries;
+    allCountries.push(country);
+
+    this.setState({ countries: allCountries });
+    this.setState({ combinedTotal: this.state.combinedTotal + country.countryTotal})
+
+    localStorage.setItem('countries', JSON.stringify(this.state.countries));
+    localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
+    
+
+  }
 
   render() {
     return (
@@ -112,7 +132,10 @@ class App extends Component {
             />)}
         </Container>
         <Button elevation={10} variant="contained" color="primary" onClick={this.clearLocalStorage}>Reset All</Button>
-        <NewCountry onAdd={ this.handleAdd } />
+        <NewCountry 
+        onAdd={ this.handleAdd }
+        countriesLength={this.state.countries.length}
+         />
       </div>
     );
   }
