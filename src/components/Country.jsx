@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Card from '@mui/material/Card';
-import { CardContent, Typography } from '@mui/material';
+import { CardContent, Typography, Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import Medal from './Medal';
 
@@ -8,6 +8,10 @@ class Country extends Component {
   render() {
     const country = this.props
     const changeMedal = this.props.changeMedal
+    const deleteCountry = this.props.deleteCountry
+
+
+   
 
     return (
       <Box
@@ -40,7 +44,17 @@ class Country extends Component {
                 countryName={country.name}
                 changeMedal={changeMedal}
               />)}
+
+          <Button
+            elevation={10} 
+            variant="contained" 
+            color="primary" 
+            onClick={ () => deleteCountry(country.id)} >
+            Delete
+          </Button>   
+
           </CardContent>
+          
         </Card>
       </Box>
     );

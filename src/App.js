@@ -8,21 +8,21 @@ class App extends Component {
   state = {
     countries: [
       {
-        id: 1, name: 'United States', countryTotal: 8, medals: [
+        id: 0, name: 'United States', countryTotal: 8, medals: [
           { type: 'Bronze', total: 2 },
           { type: 'Silver', total: 2 },
           { type: 'Gold', total: 4 },
         ]
       },
       {
-        id: 2, name: 'China', countryTotal: 7, medals: [
+        id: 1, name: 'China', countryTotal: 7, medals: [
           { type: 'Bronze', total: 2 },
           { type: 'Silver', total: 3 },
           { type: 'Gold', total: 2 },
         ]
       },
       {
-        id: 3, name: 'Germany', countryTotal: 4, medals: [
+        id: 2, name: 'Germany', countryTotal: 4, medals: [
           { type: 'Bronze', total: 1 },
           { type: 'Silver', total: 3 },
           { type: 'Gold', total: 0 },
@@ -90,16 +90,67 @@ class App extends Component {
 
   
   handleAdd = (country) => {
-    const allCountries = this.state.countries;
-    allCountries.push(country);
+    const allCountries = [...this.state.countries, country]; // this.state.countries
+    console.log(country)
+    // allCountries.push(country);
 
     this.setState({ countries: allCountries });
     this.setState({ combinedTotal: this.state.combinedTotal + country.countryTotal})
 
     localStorage.setItem('countries', JSON.stringify(this.state.countries));
     localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
+
+    console.log(allCountries)
+  }
+
+  deleteCountry = (countryId) => {
+    let mutableCountries = this.state.countries;
+    // countryId = countryId - 1;
+    let mutableCombinedTotal = this.state.combinedTotal;
+    console.log('countryId')
+    console.log(countryId)
     
 
+    // console.log("mutableCountries.countryTotal")
+    // console.log(mutableCountries[countryId].countryTotal);
+    mutableCombinedTotal = mutableCombinedTotal - mutableCountries[countryId].countryTotal;
+
+    // console.log("mutableCombinedTotal")
+    // console.log(mutableCombinedTotal);
+
+
+
+
+
+    
+    
+    // console.log("spliced")
+    // console.log(mutableCountries);
+
+
+
+    
+    for (let i = 0; i < mutableCountries.length; i++){
+      // console.log(mutableCountries[i])
+      if (mutableCountries[i].id > countryId){
+        // console.log('IT RAN')
+        // console.log(mutableCountries[i].id)
+        mutableCountries[i].id = mutableCountries[i].id - 1;
+      }
+    }
+
+      mutableCountries.splice(countryId, 1);
+      
+    // console.log(mutableCountries)
+
+    this.setState({ countries: mutableCountries });
+    this.setState({ combinedTotal: mutableCombinedTotal})
+
+    // console.log(this.state.countries)
+    localStorage.setItem('countries', JSON.stringify(this.state.countries));
+    localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
+
+    
   }
 
   render() {
@@ -129,6 +180,7 @@ class App extends Component {
               medals={country.medals}
               countryTotal={country.countryTotal}
               changeMedal={this.changeMedal}
+              deleteCountry={this.deleteCountry}
             />)}
         </Container>
         <Button elevation={10} variant="contained" color="primary" onClick={this.clearLocalStorage}>Reset All</Button>
