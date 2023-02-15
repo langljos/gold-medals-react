@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import Country from './components/Country';
 import './App.css';
-import { Typography, Box, Button, Container } from '@mui/material';
+import { Typography, Box, Fab, Container } from '@mui/material';
 import NewCountry from './components/NewCountry';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 class App extends Component {
   state = {
@@ -148,15 +149,16 @@ class App extends Component {
               deleteCountry={this.deleteCountry}
             />)}
         </Container>
-        <Button elevation={10} 
-        variant="contained" 
-        color="primary"
-        sx={{
-          position: "fixed",
-          bottom: "20px",
-          left: "20px",
-        }}
-        onClick={this.clearLocalStorage}>Reset All</Button>
+
+        <Fab color="primary"
+          sx={{
+            position: "fixed",
+            bottom: "20px",
+            left: "20px",
+          }}
+          onClick={this.clearLocalStorage}>
+            <RestartAltIcon/>
+        </Fab>
         <NewCountry 
         onAdd={ this.handleAdd }
         countriesLength={this.state.countries.length}

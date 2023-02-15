@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Fab} from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddIcon from '@mui/icons-material/Add';
 
 function country(initBronze, initSilver, initGold) {
   return {id: 0, name: '', countryTotal: 0, medals: [
@@ -58,7 +58,7 @@ render() {
           right: "20px",
         }}
         onClick={this.handleClickOpen}>
-          <AddCircleIcon />
+          <AddIcon />
         </Fab>
         <Dialog open={this.state.open} onClose={this.handleClose}>
           <DialogTitle>Add Country</DialogTitle>

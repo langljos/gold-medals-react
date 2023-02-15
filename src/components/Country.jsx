@@ -43,7 +43,8 @@ class Country extends Component {
               />)}
 
           <Fab
-
+            color="error"
+            size="small"
             onClick={ () => deleteCountry(country.id)} >
             <DeleteIcon/>
           </Fab>
