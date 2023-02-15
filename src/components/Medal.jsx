@@ -25,11 +25,8 @@ class Medal extends Component {
 
       <CardContent>
         <Grid container>
-          <Grid item xs={4}>
-            <Typography variant="h5" sx={{ color: this.setColor(medal.type) }}>{medal.total}</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Typography variant="h5" sx={{ color:  this.setColor(medal.type) }}>{medal.type}</Typography>
+          <Grid item xs={8}>
+            <Typography variant="h5" sx={{ color:  this.setColor(medal.type) }}>{medal.type}: {medal.total}</Typography>
           </Grid>
           <Grid item xs={4}>
             <Typography fontWeight="fontWeightBold">
