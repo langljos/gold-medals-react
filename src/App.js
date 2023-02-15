@@ -66,7 +66,8 @@ class App extends Component {
       }
       
     }
-    this.setLocalStorage()
+    localStorage.setItem('countries', JSON.stringify(this.state.countries));
+    localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
   }
   
   componentDidMount() {
@@ -80,7 +81,6 @@ class App extends Component {
     if (storedCombinedTotals) {
       this.setState({ combinedTotal: JSON.parse(storedCombinedTotals) });
     }
-    this.setLocalStorage()
   }
 
   clearLocalStorage() {
@@ -90,20 +90,18 @@ class App extends Component {
 
   
   handleAdd = (country) => {
-    const mutableCountries = [...this.state.countries, country]; // this.state.countries
+    const allCountries = [...this.state.countries, country];
 
-    // this.setState({ countries: mutableCountries });
-    // this.setState({ combinedTotal: this.state.combinedTotal + country.countryTotal})
+    this.setState({ countries: allCountries });
+    this.setState({ combinedTotal: this.state.combinedTotal + country.countryTotal})
 
-    this.setStates(mutableCountries, (this.state.combinedTotal + country.countryTotal))
-
+    localStorage.setItem('countries', JSON.stringify(this.state.countries));
+    localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
   }
 
   deleteCountry = (countryId) => {
     let mutableCountries = this.state.countries;
     let mutableCombinedTotal = this.state.combinedTotal;
-    console.log('countryId')
-    console.log(countryId)
 
     mutableCombinedTotal = mutableCombinedTotal - mutableCountries[countryId].countryTotal;
     
@@ -112,27 +110,11 @@ class App extends Component {
         mutableCountries[i].id = mutableCountries[i].id - 1;
       }
     }
-    mutableCountries.splice(countryId, 1);
+      mutableCountries.splice(countryId, 1);
       
-    
-    this.setStates(mutableCountries, mutableCombinedTotal)
-  }
+    this.setState({ countries: mutableCountries });
+    this.setState({ combinedTotal: mutableCombinedTotal})
 
-  setCountries(pCountries){
-    this.setState({ countries: pCountries})
-  }
-
-  setCombinedTotal(pCombinedTotal){
-    this.setState({ combinedTotal: pCombinedTotal})
-  }
-
-  setStates(pCountries, pCombinedTotal){
-    this.setCountries(pCountries);
-    this.setCombinedTotal(pCombinedTotal);
-    this.setLocalStorage();
-  }
-
-  setLocalStorage(){
     localStorage.setItem('countries', JSON.stringify(this.state.countries));
     localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
   }
