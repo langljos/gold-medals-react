@@ -35,51 +35,55 @@ class App extends Component {
 
   changeMedal = (countryName, medalType, value) => {
     value = parseInt(value);
-    // instantiates a new combinedTotal
+ 
     let combinedTotalMutable = this.state.combinedTotal
-    // instantiates a new list of countries
-    let countriesMutable = this.state.countries;
-    // determines proper country index
-    let countryIdx = countriesMutable.findIndex(country => country.name === countryName);
-    // instantiates the country from the list
-    let countryMutable = countriesMutable[countryIdx];
-    // gets the medal index for the specific medal interacted with
-    let medalsIdx = countryMutable.medals.findIndex(medal => medal.type === medalType);
 
-    let total = parseInt(countryMutable.medals[medalsIdx].total);
-    let countryTotal = parseInt(countryMutable.countryTotal);
+    const countriesMutable = [...this.state.countries];
+    let countryIdx = countriesMutable.findIndex(country => country.name === countryName);
+
+    let specificCountry = countriesMutable[countryIdx];
+
+    let specificMedal = specificCountry.medals.findIndex(medal => medal.type === medalType);
+
+    let medalTotal = parseInt(specificCountry.medals[specificMedal].total);
+
+    let countryTotal = parseInt(specificCountry.countryTotal);
+   let thing;
+    if (medalTotal > 0 || value === 1){
    
-    if (total > 0 || value === 1){
-      total = total + value;
-      countryMutable.medals[medalsIdx].total = total
-      this.setState({ medals: countryMutable.medals });
+      specificCountry.medals[specificMedal].total = medalTotal + value;
 
       if (countryTotal > 0 || value === 1){
-        countryTotal = countryTotal + value;
-        countryMutable.countryTotal = countryTotal;
-        this.setState({ countryTotal: countryMutable.countryTotal});
+        specificCountry.countryTotal += value
+        countriesMutable[countryIdx] = specificCountry;
+        this.setState( { countries: countriesMutable} )
+        
       }
-
       if (combinedTotalMutable > 0 || value === 1){
-        combinedTotalMutable = combinedTotalMutable + value;
-        this.setState({ combinedTotal: combinedTotalMutable});
+        let newCombinedTotal = combinedTotalMutable + value;
+        this.setState({ combinedTotal: (newCombinedTotal)});
+   
       }
-      
     }
     localStorage.setItem('countries', JSON.stringify(this.state.countries));
-    localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
+    localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal + value));
+    
+    
   }
   
   componentDidMount() {
     let storedCountries = localStorage.getItem('countries');
     
     let storedCombinedTotals = localStorage.getItem('combinedTotal');
+    // console.log(storedCombinedTotals)
     
     if (storedCountries) {
       this.setState({ countries: (JSON.parse(storedCountries)) });
     }
     if (storedCombinedTotals) {
-      this.setState({ combinedTotal: JSON.parse(storedCombinedTotals) });
+      console.log(this.state.combinedTotal)
+      this.setState({ combinedTotal: parseInt(storedCombinedTotals) });
+      console.log(this.state.combinedTotal)
     }
   }
 
@@ -90,10 +94,10 @@ class App extends Component {
 
   
   handleAdd = (country) => {
-    const allCountries = [...this.state.countries, country];
+    const mutableCountries = [...this.state.countries, country];
 
     if (country.name !== ""){
-      this.setState({ countries: allCountries });
+      this.setState({ countries: mutableCountries });
       this.setState({ combinedTotal: this.state.combinedTotal + country.countryTotal})
 
       localStorage.setItem('countries', JSON.stringify(this.state.countries));
