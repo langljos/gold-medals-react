@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from '@mui/material';
 
-// const country = {id: 0, name: '', countryTotal: 0, medals: [
-//     { type: 'Bronze', total: 0 },
-//     { type: 'Silver', total: 0 },
-//     { type: 'Gold', total: 0 },
-//   ]}
-
   function country(initBronze, initSilver, initGold) {
     return {id: 0, name: '', countryTotal: 0, medals: [
         { type: 'Bronze', total: initBronze },
@@ -42,18 +36,13 @@ class NewCountry extends Component {
         let gold = this.state.goldInit;
 
         let mutableCountry = country(bronze, silver, gold);
-        // let medalsMutable = medals();
 
         mutableCountry.id = length;
         mutableCountry.name = this.state.countryName;
-
-        // mutableCountry.medals = medalsMutable
         mutableCountry.countryTotal = parseInt(bronze) + parseInt(silver) + parseInt(gold);
 
         this.props.onAdd(mutableCountry)
         this.toggleForm();
-        // console.log("Test")
-
       }
 
       handleChange = (e) => this.setState({ [e.target.name]: e.target.value});
