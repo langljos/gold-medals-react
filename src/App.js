@@ -92,11 +92,15 @@ class App extends Component {
   handleAdd = (country) => {
     const allCountries = [...this.state.countries, country];
 
-    this.setState({ countries: allCountries });
-    this.setState({ combinedTotal: this.state.combinedTotal + country.countryTotal})
+    if (country.name !== ""){
+      this.setState({ countries: allCountries });
+      this.setState({ combinedTotal: this.state.combinedTotal + country.countryTotal})
 
-    localStorage.setItem('countries', JSON.stringify(this.state.countries));
-    localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
+      localStorage.setItem('countries', JSON.stringify(this.state.countries));
+      localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
+    }
+
+    
   }
 
   deleteCountry = (countryId) => {
