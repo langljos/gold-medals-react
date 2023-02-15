@@ -48,7 +48,6 @@ class App extends Component {
     let medalTotal = parseInt(specificCountry.medals[specificMedal].total);
 
     let countryTotal = parseInt(specificCountry.countryTotal);
-   let thing;
     if (medalTotal > 0 || value === 1){
    
       specificCountry.medals[specificMedal].total = medalTotal + value;
