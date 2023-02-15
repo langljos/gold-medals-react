@@ -61,13 +61,10 @@ class App extends Component {
       if (combinedTotalMutable > 0 || value === 1){
         let newCombinedTotal = combinedTotalMutable + value;
         this.setState({ combinedTotal: (newCombinedTotal)});
-   
       }
     }
     localStorage.setItem('countries', JSON.stringify(this.state.countries));
     localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal + value));
-    
-    
   }
   
   componentDidMount() {
@@ -102,8 +99,6 @@ class App extends Component {
       localStorage.setItem('countries', JSON.stringify(this.state.countries));
       localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
     }
-
-    
   }
 
   deleteCountry = (countryId) => {
@@ -140,10 +135,7 @@ class App extends Component {
         <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
               Olympic Medals {this.state.combinedTotal}
         </Typography>
-      
-
       </Box>
-
         <Container>
           {this.state.countries.map((country) =>
             <Country
@@ -156,7 +148,15 @@ class App extends Component {
               deleteCountry={this.deleteCountry}
             />)}
         </Container>
-        <Button elevation={10} variant="contained" color="primary" onClick={this.clearLocalStorage}>Reset All</Button>
+        <Button elevation={10} 
+        variant="contained" 
+        color="primary"
+        sx={{
+          position: "fixed",
+          bottom: "20px",
+          left: "20px",
+        }}
+        onClick={this.clearLocalStorage}>Reset All</Button>
         <NewCountry 
         onAdd={ this.handleAdd }
         countriesLength={this.state.countries.length}
