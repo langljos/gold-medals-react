@@ -20,23 +20,18 @@ class App extends Component {
   async fetchData() {
     const { data: fetchedCountries } = await axios.get(this.apiEndpoint);
     this.setCountries(fetchedCountries);
-    console.log(this.state.countries)
-    this.setCombinedTotal();
   }
 
   async addCountry(country) {
-    console.log(country)
     const { data: postCountry } = await axios.post(this.apiEndpoint, country);
     let countries = this.state.countries;
     countries.push(postCountry);
     this.setState({ countries: countries });
-    console.log(this.state.countries)
     this.setCombinedTotal();
 
   }
 
   async deleteCountry(id) {
-    console.log(id)
     await axios.delete(`${this.apiEndpoint}/${id}`)
     const countries = this.state.countries.filter(c => c.id !== id)
     this.setState({ countries: countries })
@@ -92,6 +87,7 @@ class App extends Component {
   
   componentDidMount() {
     this.fetchData();
+    this.setCombinedTotal();
   }
   
   handleAdd = (country) => {
@@ -102,7 +98,7 @@ class App extends Component {
 
   setHeaderTotal () {
     if (!this.state.combinedTotal){
-      return 0;
+      return "Loading";
     } else {
       return this.state.combinedTotal;
     }
@@ -120,7 +116,7 @@ class App extends Component {
         display: "flex",
       }}>
         <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
-              Olympic Medals {this.state.combinedTotal}
+              Olympic Medals {this.setHeaderTotal()}
         </Typography>
       </Box>
         <Container>
