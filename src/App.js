@@ -20,6 +20,8 @@ class App extends Component {
   async fetchData() {
     const { data: fetchedCountries } = await axios.get(this.apiEndpoint);
     this.setCountries(fetchedCountries);
+    this.setCombinedTotal();
+    this.setHeaderTotal();
   }
 
   async addCountry(country) {
@@ -87,7 +89,6 @@ class App extends Component {
   
   componentDidMount() {
     this.fetchData();
-    this.setCombinedTotal();
   }
   
   handleAdd = (country) => {
@@ -98,9 +99,9 @@ class App extends Component {
 
   setHeaderTotal () {
     if (!this.state.combinedTotal){
-      return "Loading";
+      return "No Medals Found";
     } else {
-      return this.state.combinedTotal;
+      return "Olympic Medals: " + this.state.combinedTotal;
     }
   }
 
@@ -116,7 +117,7 @@ class App extends Component {
         display: "flex",
       }}>
         <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
-              Olympic Medals {this.state.combinedTotal}
+              {this.setHeaderTotal()}
         </Typography>
       </Box>
         <Container>
