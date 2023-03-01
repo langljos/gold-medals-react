@@ -120,7 +120,7 @@ class App extends Component {
         display: "flex",
       }}>
         <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
-              Olympic Medals {this.setHeaderTotal()}
+              Olympic Medals {this.state.combinedTotal}
         </Typography>
       </Box>
         <Container>
