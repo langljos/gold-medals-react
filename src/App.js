@@ -1,38 +1,57 @@
 import React, { Component } from 'react'
 import Country from './components/Country';
 import './App.css';
-import { Typography, Box, Fab, Container } from '@mui/material';
+import { Typography, Box, Container } from '@mui/material';
 import NewCountry from './components/NewCountry';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import axios from 'axios';
 
 class App extends Component {
+  constructor() {
+    super();
+    this.apiEndpoint = "https://jlanglois-olympic-medals.azurewebsites.net/api/Country";
+    // this.apiEndpoint = "https://localhost:7118/api/Country";
+  }
+
   state = {
-    countries: [
-      {
-        id: 0, name: 'United States', countryTotal: 8, medals: [
-          { type: 'Bronze', total: 2 },
-          { type: 'Silver', total: 2 },
-          { type: 'Gold', total: 4 },
-        ]
-      },
-      {
-        id: 1, name: 'China', countryTotal: 7, medals: [
-          { type: 'Bronze', total: 2 },
-          { type: 'Silver', total: 3 },
-          { type: 'Gold', total: 2 },
-        ]
-      },
-      {
-        id: 2, name: 'Germany', countryTotal: 4, medals: [
-          { type: 'Bronze', total: 1 },
-          { type: 'Silver', total: 3 },
-          { type: 'Gold', total: 0 },
-        ]
-      },
-    ],
-    combinedTotal: 19
+    countries: [],
+    combinedTotal: 0
+  }
+
+  async fetchData() {
+    const { data: fetchedCountries } = await axios.get(this.apiEndpoint);
+    this.setCountries(fetchedCountries);
+    console.log(this.state.countries)
+    this.setCombinedTotal();
+  }
+
+  async addCountry(country) {
+    console.log(country)
+    const { data: postCountry } = await axios.post(this.apiEndpoint, country);
+    let countries = this.state.countries;
+    countries.push(postCountry);
+    this.setState({ countries: countries });
+    console.log(this.state.countries)
+    this.setCombinedTotal();
 
   }
+
+  async deleteCountry(id) {
+    console.log(id)
+    await axios.delete(`${this.apiEndpoint}/${id}`)
+    const countries = this.state.countries.filter(c => c.id !== id)
+    this.setState({ countries: countries })
+    this.setState({ combinedTotal: countries.reduce((partialSum, country) => partialSum + country.goldMedalCount + country.silverMedalCount + country.bronzeMedalCount, 0) });
+  }
+
+  setCountries (countries) {
+    this.setState({ countries: countries });
+  }
+
+  setCombinedTotal() {
+    const total = this.state.countries.reduce((partialSum, country) => partialSum + country.goldMedalCount + country.silverMedalCount + country.bronzeMedalCount, 0);
+    this.setState({ combinedTotal: total });
+  }
+  
 
   changeMedal = (countryName, medalType, value) => {
     value = parseInt(value);
@@ -64,62 +83,29 @@ class App extends Component {
         this.setState({ combinedTotal: (newCombinedTotal)});
       }
     }
-    localStorage.setItem('countries', JSON.stringify(this.state.countries));
-    localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal + value));
+
+    
+
+    // localStorage.setItem('countries', JSON.stringify(this.state.countries));
+    // localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal + value));
   }
   
   componentDidMount() {
-    let storedCountries = localStorage.getItem('countries');
-    
-    let storedCombinedTotals = localStorage.getItem('combinedTotal');
-    // console.log(storedCombinedTotals)
-    
-    if (storedCountries) {
-      this.setState({ countries: (JSON.parse(storedCountries)) });
-    }
-    if (storedCombinedTotals) {
-      console.log(this.state.combinedTotal)
-      this.setState({ combinedTotal: parseInt(storedCombinedTotals) });
-      console.log(this.state.combinedTotal)
-    }
+    this.fetchData();
   }
-
-  clearLocalStorage() {
-    localStorage.clear()
-    window.location.reload()
-  }
-
   
   handleAdd = (country) => {
-    const mutableCountries = [...this.state.countries, country];
-
     if (country.name !== ""){
-      this.setState({ countries: mutableCountries });
-      this.setState({ combinedTotal: this.state.combinedTotal + country.countryTotal})
-
-      localStorage.setItem('countries', JSON.stringify(this.state.countries));
-      localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
+      this.addCountry(country)
     }
   }
 
-  deleteCountry = (countryId) => {
-    let mutableCountries = this.state.countries;
-    let mutableCombinedTotal = this.state.combinedTotal;
-
-    mutableCombinedTotal = mutableCombinedTotal - mutableCountries[countryId].countryTotal;
-    
-    for (let i = 0; i < mutableCountries.length; i++){
-      if (mutableCountries[i].id > countryId){
-        mutableCountries[i].id = mutableCountries[i].id - 1;
-      }
+  setHeaderTotal () {
+    if (!this.state.combinedTotal){
+      return 0;
+    } else {
+      return this.state.combinedTotal;
     }
-      mutableCountries.splice(countryId, 1);
-      
-    this.setState({ countries: mutableCountries });
-    this.setState({ combinedTotal: mutableCombinedTotal})
-
-    localStorage.setItem('countries', JSON.stringify(this.state.countries));
-    localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal));
   }
 
   render() {
@@ -134,23 +120,20 @@ class App extends Component {
         display: "flex",
       }}>
         <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
-              Olympic Medals {this.state.combinedTotal}
+              Olympic Medals {this.setHeaderTotal()}
         </Typography>
       </Box>
         <Container>
-          {this.state.countries.map((country) =>
+          {(this.state.countries || []).map((country) =>
             <Country
               key={country.id}
-              id={country.id}
-              name={country.name}
-              medals={country.medals}
-              countryTotal={country.countryTotal}
+              country={country}
               changeMedal={this.changeMedal}
-              deleteCountry={this.deleteCountry}
+              deleteCountry={this.deleteCountry.bind(this)}
             />)}
         </Container>
 
-        <Fab color="primary"
+        {/* <Fab color="primary"
           sx={{
             position: "fixed",
             bottom: "20px",
@@ -158,10 +141,10 @@ class App extends Component {
           }}
           onClick={this.clearLocalStorage}>
             <RestartAltIcon/>
-        </Fab>
+        </Fab> */}
         <NewCountry 
         onAdd={ this.handleAdd }
-        countriesLength={this.state.countries.length}
+        // countriesLength={this.state.countries.length}
          />
       </div>
     );

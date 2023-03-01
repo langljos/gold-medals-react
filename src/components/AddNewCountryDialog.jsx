@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Fab} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-function country(initBronze, initSilver, initGold) {
-  return {id: 0, name: '', countryTotal: 0, medals: [
-      { type: 'Bronze', total: initBronze },
-      { type: 'Silver', total: initSilver },
-      { type: 'Gold', total: initGold },
-    ]}
+function country(name, bronze, silver, gold) {
+  return {
+    name: name, 
+    bronzeMedalCount: parseInt(bronze), 
+    silverMedalCount: parseInt(silver), 
+    goldMedalCount: parseInt(gold)}
 }
 
 class AddNewCountryDialog extends Component {
@@ -16,10 +16,8 @@ class AddNewCountryDialog extends Component {
       bronzeInit: 0,
       silverInit: 0,
       goldInit: 0,
-      countryId: 0,
       countryName: '',
-      countryTotal: 0,
-      newCountry: country
+      // newCountry: country
     };
 
 
@@ -31,25 +29,33 @@ class AddNewCountryDialog extends Component {
     this.setState({ open: false });
   };
 
-  handleSave = (length) => {
-    let bronze = this.state.bronzeInit;
-    let silver = this.state.silverInit;
-    let gold = this.state.goldInit;
+  handleSubmit = () => {
+    // console.log("this happened")
+    const name = this.state.countryName;
+    const bronze = this.state.bronzeInit;
+    const silver = this.state.silverInit;
+    const gold = this.state.goldInit;
 
-    let mutableCountry = country(bronze, silver, gold);
+    const newCountry = country(name, bronze, silver, gold);
 
-    mutableCountry.id = length;
-    mutableCountry.name = this.state.countryName;
-    mutableCountry.countryTotal = parseInt(bronze) + parseInt(silver) + parseInt(gold);
+    // console.log("handleSubmit")
+    // console.log(newCountry)
 
-    this.props.onAdd(mutableCountry)
+    // mutableCountry.id = length;
+    // mutableCountry.name = this.state.countryName;
+    // mutableCountry.countryTotal = parseInt(bronze) + parseInt(silver) + parseInt(gold);
+
+    this.props.onAdd(newCountry)
     this.handleClose();
   }
 
-  handleChange = (e) => this.setState({ [e.target.name]: e.target.value});
+  handleChange = (e) => {
+    if (e){
+      this.setState({ [e.target.name]: e.target.value})
+    }
+  };
 
 render() {
-  const countriesLength = this.props.countriesLength
     return (
       <div>
         <Fab color="primary" sx={{
@@ -73,6 +79,7 @@ render() {
               value={this.state.countryName}
               onChange={this.handleChange}
               fullWidth
+              required
             />
             <TextField
               margin="dense"
@@ -106,8 +113,8 @@ render() {
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={() => this.handleSave(countriesLength)} color="primary">
-              Save
+            <Button onClick={this.handleSubmit} color="primary">
+              Submit
             </Button>
           </DialogActions>
         </Dialog>

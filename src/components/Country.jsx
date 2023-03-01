@@ -6,8 +6,9 @@ import Medal from './Medal';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 class Country extends Component {
+
   render() {
-    const country = this.props
+    const country = this.props.country
     const changeMedal = this.props.changeMedal
     const deleteCountry = this.props.deleteCountry
     return (
@@ -29,30 +30,39 @@ class Country extends Component {
             </Typography>
 
             <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
-              {country.countryTotal}
+              {(country.bronzeMedalCount + country.silverMedalCount + country.goldMedalCount)}
             </Typography>
 
-            {country.medals.map(medal =>
-              <Medal
-                key={medal.type}
-                type={medal.type}
-                color={medal.color}
-                total={medal.total}
-                countryName={country.name}
-                changeMedal={changeMedal}
-              />)}
+            <Medal
+              type="Bronze"
+              total={country.bronzeMedalCount}
+              countryName={country.name}
+              changeMedal={changeMedal}
+            />
+            <Medal
+              type="Silver"
+              total={country.silverMedalCount}
+              countryName={country.name}
+              changeMedal={changeMedal}
+            />
+            <Medal
+              type="Gold"
+              total={country.goldMedalCount}
+              countryName={country.name}
+              changeMedal={changeMedal}
+            />
 
-          <Fab
-            color="error"
-            size="small"
-            onClick={ () => deleteCountry(country.id)} >
-            <DeleteIcon/>
-          </Fab>
-          
-             
+            <Fab
+              color="error"
+              size="small"
+              onClick={() => deleteCountry(country.id)} >
+              <DeleteIcon />
+            </Fab>
+
+
 
           </CardContent>
-          
+
         </Card>
       </Box>
     );
