@@ -26,6 +26,10 @@ class AddNewCountryDialog extends Component {
 
   handleClose = () => {
     this.setState({ open: false });
+    this.setState({ bronzeInit: 0 })
+    this.setState({ silverInit: 0 })
+    this.setState({ goldInit: 0 })
+    this.setState({ countryName: "" })
   };
 
   handleSubmit = () => {
@@ -38,6 +42,8 @@ class AddNewCountryDialog extends Component {
 
     this.props.onAdd(newCountry)
     this.handleClose();
+
+   
   }
 
   handleChange = (e) => {
