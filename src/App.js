@@ -4,91 +4,71 @@ import './App.css';
 import { Typography, Box, Container } from '@mui/material';
 import NewCountry from './components/NewCountry';
 import axios from 'axios';
+import {apiEndpoint} from "./Constants";
 
 class App extends Component {
-  constructor() {
-    super();
-    this.apiEndpoint = "https://jlanglois-olympic-medals.azurewebsites.net/api/Country";
-    // this.apiEndpoint = "https://localhost:7118/api/Country";
-  }
-
   state = {
     countries: [],
     combinedTotal: 0
   }
 
   async fetchData() {
-    const { data: fetchedCountries } = await axios.get(this.apiEndpoint);
-    this.setCountries(fetchedCountries);
-    this.setCombinedTotal();
+    const { data: fetchedCountries } = await axios.get(apiEndpoint);
+    this.setState({
+      countries: fetchedCountries,
+      combinedTotal: this.getCombinedTotal(fetchedCountries)
+    });
     this.setHeaderTotal();
   }
 
   async addCountry(country) {
-    const { data: postCountry } = await axios.post(this.apiEndpoint, country);
+    const { data: postCountry } = await axios.post(apiEndpoint, country);
     let countries = this.state.countries;
     countries.push(postCountry);
-    this.setState({ countries: countries });
-    this.setCombinedTotal();
 
+    this.setState({
+      countries: countries,
+      combinedTotal: this.getCombinedTotal(countries)
+    });
   }
 
   async deleteCountry(id) {
-    await axios.delete(`${this.apiEndpoint}/${id}`)
-    const countries = this.state.countries.filter(c => c.id !== id)
-    this.setState({ countries: countries })
-    this.setState({ combinedTotal: countries.reduce((partialSum, country) => partialSum + country.goldMedalCount + country.silverMedalCount + country.bronzeMedalCount, 0) });
+    await axios.delete(`${apiEndpoint}/${id}`)
+        .then(result => {
+          const countries = this.state.countries.filter(c => c.id !== id)
+
+          this.setState({
+            countries: countries,
+            combinedTotal: this.getCombinedTotal(countries)
+          })
+        });
   }
 
-  setCountries (countries) {
-    this.setState({ countries: countries });
+  getCombinedTotal(countries) {
+    return countries.reduce((partialSum, country) =>
+        partialSum + country.goldMedalCount + country.silverMedalCount + country.bronzeMedalCount, 0);
   }
 
-  setCombinedTotal() {
-    const total = this.state.countries.reduce((partialSum, country) => partialSum + country.goldMedalCount + country.silverMedalCount + country.bronzeMedalCount, 0);
-    this.setState({ combinedTotal: total });
-  }
-  
-
-  changeMedal = (countryName, medalType, value) => {
-    value = parseInt(value);
- 
-    let combinedTotalMutable = this.state.combinedTotal
-
+  changeMedal = (countryName, propertyName, value) => {
     const countriesMutable = [...this.state.countries];
-    let countryIdx = countriesMutable.findIndex(country => country.name === countryName);
+    const specificCountry = countriesMutable.find(country => country.name === countryName);
 
-    let specificCountry = countriesMutable[countryIdx];
+    const valueToAdd = value < 0 ? -1 : 1;
 
-    let specificMedal = specificCountry.medals.findIndex(medal => medal.type === medalType);
-
-    let medalTotal = parseInt(specificCountry.medals[specificMedal].total);
-
-    let countryTotal = parseInt(specificCountry.countryTotal);
-    if (medalTotal > 0 || value === 1){
-   
-      specificCountry.medals[specificMedal].total = medalTotal + value;
-
-      if (countryTotal > 0 || value === 1){
-        specificCountry.countryTotal += value
-        countriesMutable[countryIdx] = specificCountry;
-        this.setState( { countries: countriesMutable} )
-        
-      }
-      if (combinedTotalMutable > 0 || value === 1){
-        let newCombinedTotal = combinedTotalMutable + value;
-        this.setState({ combinedTotal: (newCombinedTotal)});
-      }
+    if (!specificCountry || !specificCountry[propertyName] && valueToAdd < 0) {
+      return;
     }
 
-    
+    specificCountry[propertyName] += valueToAdd;
 
-    // localStorage.setItem('countries', JSON.stringify(this.state.countries));
-    // localStorage.setItem('combinedTotal', JSON.stringify(this.state.combinedTotal + value));
+    this.setState({
+      countries: countriesMutable,
+      combinedTotal: this.getCombinedTotal(countriesMutable)
+    });
   }
   
-  componentDidMount() {
-    this.fetchData();
+  async componentDidMount() {
+    await this.fetchData();
   }
   
   handleAdd = (country) => {
@@ -129,19 +109,8 @@ class App extends Component {
               deleteCountry={this.deleteCountry.bind(this)}
             />)}
         </Container>
-
-        {/* <Fab color="primary"
-          sx={{
-            position: "fixed",
-            bottom: "20px",
-            left: "20px",
-          }}
-          onClick={this.clearLocalStorage}>
-            <RestartAltIcon/>
-        </Fab> */}
         <NewCountry 
         onAdd={ this.handleAdd }
-        // countriesLength={this.state.countries.length}
          />
       </div>
     );

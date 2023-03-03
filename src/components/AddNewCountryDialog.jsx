@@ -17,7 +17,6 @@ class AddNewCountryDialog extends Component {
       silverInit: 0,
       goldInit: 0,
       countryName: '',
-      // newCountry: country
     };
 
 
@@ -30,20 +29,12 @@ class AddNewCountryDialog extends Component {
   };
 
   handleSubmit = () => {
-    // console.log("this happened")
     const name = this.state.countryName;
     const bronze = this.state.bronzeInit;
     const silver = this.state.silverInit;
     const gold = this.state.goldInit;
 
     const newCountry = country(name, bronze, silver, gold);
-
-    // console.log("handleSubmit")
-    // console.log(newCountry)
-
-    // mutableCountry.id = length;
-    // mutableCountry.name = this.state.countryName;
-    // mutableCountry.countryTotal = parseInt(bronze) + parseInt(silver) + parseInt(gold);
 
     this.props.onAdd(newCountry)
     this.handleClose();

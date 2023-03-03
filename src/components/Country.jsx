@@ -38,18 +38,21 @@ class Country extends Component {
               total={country.bronzeMedalCount}
               countryName={country.name}
               changeMedal={changeMedal}
+              propertyName="bronzeMedalCount"
             />
             <Medal
               type="Silver"
               total={country.silverMedalCount}
               countryName={country.name}
               changeMedal={changeMedal}
+              propertyName="silverMedalCount"
             />
             <Medal
               type="Gold"
               total={country.goldMedalCount}
               countryName={country.name}
               changeMedal={changeMedal}
+              propertyName="goldMedalCount"
             />
 
             <Fab

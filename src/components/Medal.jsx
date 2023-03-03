@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { CardContent, Typography, Grid } from '@mui/material';
+import {CardContent, Typography, Grid, IconButton} from '@mui/material';
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 
@@ -20,6 +20,7 @@ class Medal extends Component {
     const medal = this.props
     const countryName = this.props.countryName
     const changeMedal = this.props.changeMedal
+    const propertyName = this.props.propertyName;
 
     return (
 
@@ -30,8 +31,12 @@ class Medal extends Component {
           </Grid>
           <Grid item xs={4}>
             <Typography fontWeight="fontWeightBold">
-              <AddBoxOutlinedIcon sx={{ color: '#00FF00' }} className='Medal' onClick={() => changeMedal(countryName, medal.type, 1)}></AddBoxOutlinedIcon>
-              <IndeterminateCheckBoxOutlinedIcon sx={{ color: '#FF0000' }} className='Medal' onClick={() => changeMedal(countryName, medal.type, -1)}></IndeterminateCheckBoxOutlinedIcon>
+              <IconButton onClick={() => changeMedal(countryName, propertyName, 1)}>
+                <AddBoxOutlinedIcon sx={{ color: '#00FF00' }} className='Medal'></AddBoxOutlinedIcon>
+              </IconButton>
+              <IconButton onClick={() => changeMedal(countryName, propertyName, -1)}>
+                <IndeterminateCheckBoxOutlinedIcon sx={{ color: '#FF0000' }} className='Medal'></IndeterminateCheckBoxOutlinedIcon>
+              </IconButton>
             </Typography>
           </Grid>
         </Grid>
