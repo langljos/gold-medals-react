@@ -47,6 +47,7 @@ const App = () => {
             mutableCountries = mutableCountries.concat(country);
 
             setCountries(mutableCountries);
+            setCombinedTotal(getCombinedTotal(mutableCountries));
           });
 
           connection.on('ReceiveDeleteMessage', id => {
@@ -54,6 +55,7 @@ const App = () => {
             let mutableCountries = [...latestCountries.current];
             mutableCountries = mutableCountries.filter(c => c.id !== id);
             setCountries(mutableCountries);
+            setCombinedTotal(getCombinedTotal(mutableCountries));
           });
 
           connection.on('ReceivePatchMessage', country => {
@@ -63,6 +65,7 @@ const App = () => {
             mutableCountries[idx] = country;
 
             setCountries(mutableCountries);
+            setCombinedTotal(getCombinedTotal(mutableCountries));
           });
         })
         .catch(e => console.log('Connection failed: ', e));
