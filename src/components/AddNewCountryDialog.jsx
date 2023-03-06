@@ -34,7 +34,7 @@ class AddNewCountryDialog extends Component {
 
   handleSubmit = () => {
     var name = this.state.countryName;
-
+    name = name.trim().charAt(0).toUpperCase() + name.slice(1);
     const bronze = this.state.bronzeInit;
     const silver = this.state.silverInit;
     const gold = this.state.goldInit;
