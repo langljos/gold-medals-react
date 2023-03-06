@@ -59,7 +59,7 @@ const App = () => {
           });
 
           connection.on('ReceivePatchMessage', country => {
-            console.log(`Patch: ${country.name}`);
+            console.log(`Patch: Name: ${country.name} Id: ${country.id}`);
             let mutableCountries = [...latestCountries.current];
             const idx = mutableCountries.findIndex(c => c.id === country.id);
             mutableCountries[idx] = country;
@@ -75,8 +75,13 @@ const App = () => {
 
 
   const addCountry = async (country) => {
-    const { data: postCountry } = await axios.post(apiEndpoint, country);
     let mutCountries = countries;
+    if (mutCountries.find( c => c.name.toLowerCase() === country.name.toLowerCase() )){
+      alert("Please enter a unique country name.")
+      return;
+    }
+
+    const { data: postCountry } = await axios.post(apiEndpoint, country);
     mutCountries.push(postCountry);
 
     setCountries(mutCountries);
@@ -155,7 +160,7 @@ const App = () => {
         </Typography>
       </Box>
       <Container>
-        {(countries || []).map((country) =>
+        {(countries || []).map(country =>
           <Country
             key={country.id}
             country={country}

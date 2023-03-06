@@ -33,22 +33,38 @@ class AddNewCountryDialog extends Component {
   };
 
   handleSubmit = () => {
-    const name = this.state.countryName;
+    var name = this.state.countryName;
+
     const bronze = this.state.bronzeInit;
     const silver = this.state.silverInit;
     const gold = this.state.goldInit;
+
+    if (name === " " || name === ""){
+      alert("Please enter a valid country name.")
+      return;
+    }
+
+    if ( bronze > 100 || silver > 100 || gold > 100){
+      alert("Please enter a value less than 100.")
+      return;
+    }
 
     const newCountry = country(name, bronze, silver, gold);
 
     this.props.onAdd(newCountry)
     this.handleClose();
-
-   
   }
 
-  handleChange = (e) => {
-    if (e){
-      this.setState({ [e.target.name]: e.target.value})
+  handleChangeNumbers = (e) => {
+    if (e.target.value >= 0 && e) {
+      this.setState({ [e.target.name]: e.target.value })
+    }
+  };
+
+  handleChangeStrings = (e) => {
+    const regex = /\s{2,}/g;
+    if (e.target.value.match(regex) == null && e) {
+      this.setState({ [e.target.name]: e.target.value })
     }
   };
 
@@ -74,7 +90,7 @@ render() {
               name="countryName"
               type="text"
               value={this.state.countryName}
-              onChange={this.handleChange}
+              onChange={this.handleChangeStrings}
               fullWidth
               required
             />
@@ -84,7 +100,7 @@ render() {
               name="bronzeInit"
               type="number"
               value={this.state.bronzeInit}
-              onChange={this.handleChange}
+              onChange={this.handleChangeNumbers}
               fullWidth
             />
             <TextField
@@ -93,7 +109,7 @@ render() {
               name="silverInit"
               type="number"
               value={this.state.silverInit}
-              onChange={this.handleChange}
+              onChange={this.handleChangeNumbers}
               fullWidth
             />
             <TextField
@@ -102,7 +118,7 @@ render() {
               name="goldInit"
               type="number"
               value={this.state.goldInit}
-              onChange={this.handleChange}
+              onChange={this.handleChangeNumbers}
               fullWidth
             />
           </DialogContent>
