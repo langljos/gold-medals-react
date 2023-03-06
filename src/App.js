@@ -111,8 +111,10 @@ const App = () => {
     if (!specificCountry || (!specificCountry[propertyName] && valueToAdd < 0)) {
       return;
     }
-    specificCountry[propertyName] += valueToAdd;
-
+    if( specificCountry[propertyName] < 100 || (specificCountry[propertyName] <= 100 && valueToAdd === -1)){
+      specificCountry[propertyName] += valueToAdd;
+    }
+    
     const jsonPatch = [{ op: "replace", path: propertyName, value: specificCountry[propertyName] }];
     console.log(`json patch for id: ${specificCountry.id}: ${JSON.stringify(jsonPatch)}`);
 
