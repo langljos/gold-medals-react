@@ -11,6 +11,8 @@ class Country extends Component {
     const country = this.props.country
     const changeMedal = this.props.changeMedal
     const deleteCountry = this.props.deleteCountry
+    const canDelete = this.props.canDelete
+    const canPatch = this.props.canPatch
     return (
       <Box
         component="span"
@@ -39,30 +41,36 @@ class Country extends Component {
               countryName={country.name}
               changeMedal={changeMedal}
               propertyName="bronzeMedalCount"
+              canPatch={canPatch}
             />
+
             <Medal
               type="Silver"
               total={country.silverMedalCount}
               countryName={country.name}
               changeMedal={changeMedal}
               propertyName="silverMedalCount"
+              canPatch={canPatch}
             />
+
             <Medal
               type="Gold"
               total={country.goldMedalCount}
               countryName={country.name}
               changeMedal={changeMedal}
               propertyName="goldMedalCount"
+              canPatch={canPatch}
             />
 
-            <Fab
-              color="error"
-              size="small"
-              onClick={() => deleteCountry(country.id)} >
-              <DeleteIcon />
-            </Fab>
 
-
+            {canDelete &&
+              <Fab
+                color="error"
+                size="small"
+                onClick={() => deleteCountry(country.id)} >
+                <DeleteIcon />
+              </Fab>
+            }
 
           </CardContent>
 

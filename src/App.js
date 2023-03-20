@@ -4,8 +4,11 @@ import './App.css';
 import { Typography, Box, Container } from '@mui/material';
 import NewCountry from './components/NewCountry';
 import axios from 'axios';
-import { apiEndpoint, hubEndpoint } from "./Constants";
+import { apiEndpoint, hubEndpoint, usersEndpoint } from "./Constants";
 import { HubConnectionBuilder } from '@microsoft/signalr';
+import Login from './components/Login';
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom'
+import jwtDecode from 'jwt-decode';
 
 const App = () => {
   const [countries, setCountries] = useState([]);
@@ -16,6 +19,15 @@ const App = () => {
   // this is needed to access state variable in useEffect w/o dependency
   latestCountries.current = countries;
 
+  const [user, setUser] = useState(
+    {
+      name: null,
+      canPost: false,
+      canPatch: false,
+      canDelete: false
+    }
+  );
+
   useEffect(() => {
     async function fetchData() {
       const { data: fetchedCountries } = await axios.get(apiEndpoint);
@@ -24,6 +36,12 @@ const App = () => {
 
     }
     fetchData();
+
+    const encodedJwt = localStorage.getItem("token");
+    // check for existing token
+    if (encodedJwt) {
+      setUser(getUser(encodedJwt));
+    }
 
     // signalR
     const newConnection = new HubConnectionBuilder()
@@ -76,26 +94,99 @@ const App = () => {
 
   const addCountry = async (country) => {
     let mutCountries = countries;
-    if (mutCountries.find( c => c.name.toLowerCase() === country.name.toLowerCase() )){
+    if (mutCountries.find(c => c.name.toLowerCase() === country.name.toLowerCase())) {
       alert("Please enter a unique country name.")
       return;
     }
 
-    const { data: postCountry } = await axios.post(apiEndpoint, country);
-    mutCountries.push(postCountry);
+    //  = await axios.post(apiEndpoint, country);
 
-    setCountries(mutCountries);
-    setCombinedTotal(getCombinedTotal(mutCountries));
+
+
+    try {
+      const { data: postCountry } = await axios.post(apiEndpoint, {
+        country: country
+      }, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      mutCountries.push(postCountry);
+
+      setCountries(mutCountries);
+      setCombinedTotal(getCombinedTotal(mutCountries));
+    } catch (ex) {
+      if (ex.response && (ex.response.status === 401 || ex.response.status === 403)) {
+        alert("You are not authorized to complete this request");
+      } else if (ex.response) {
+        console.log(ex.response);
+      } else {
+        console.log("Request failed");
+      }
+    }
+
+
+
+
+    // const { data: postCountry } = await axios.post(apiEndpoint, {
+    //   country: country
+    // }, {
+    //   headers: {
+    //     'Authorization': `Bearer ${localStorage.getItem('token')}`
+    //   }
+    // });
+
+
+    // mutCountries.push(postCountry);
+
+    // setCountries(mutCountries);
+    // setCombinedTotal(getCombinedTotal(mutCountries));
   }
 
   const deleteCountry = async (id) => {
-    await axios.delete(`${apiEndpoint}/${id}`)
-      .then(result => {
-        const mutCountries = countries.filter(c => c.id !== id)
+    // await axios.delete(`${apiEndpoint}/${id}`, {
+    //   headers: {
+    //     'Authorization': `Bearer ${localStorage.getItem('token')}`
+    //   }
+    // });
+    console.log('token')
+    console.log(localStorage.getItem('token'))
 
-        setCountries(mutCountries);
-        setCombinedTotal(getCombinedTotal(mutCountries));
+    try {
+      await axios.delete(`${apiEndpoint}/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
+      const mutCountries = countries.filter(c => c.id !== id)
+      setCountries(mutCountries);
+      setCombinedTotal(getCombinedTotal(mutCountries));
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404) {
+        // country already deleted
+        console.log("The record does not exist - it may have already been deleted");
+      } else {
+        if (ex.response && (ex.response.status === 401 || ex.response.status === 403)) {
+          alert("You are not authorized to complete this request");
+        } else if (ex.response) {
+          console.log(ex.response);
+        } else {
+          console.log("Request failed");
+        }
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
   }
 
   const getCombinedTotal = (countries) => {
@@ -111,19 +202,21 @@ const App = () => {
     if (!specificCountry || (!specificCountry[propertyName] && valueToAdd < 0)) {
       return;
     }
-    if( specificCountry[propertyName] < 100 || (specificCountry[propertyName] <= 100 && valueToAdd === -1)){
+    if (specificCountry[propertyName] < 100 || (specificCountry[propertyName] <= 100 && valueToAdd === -1)) {
       specificCountry[propertyName] += valueToAdd;
     }
-    
+
     const jsonPatch = [{ op: "replace", path: propertyName, value: specificCountry[propertyName] }];
     console.log(`json patch for id: ${specificCountry.id}: ${JSON.stringify(jsonPatch)}`);
 
     try {
-      await axios.patch(`${apiEndpoint}/${specificCountry.id}`, jsonPatch).then(() => {
-        setCountries(countriesMutable);
-        setCombinedTotal(getCombinedTotal(countriesMutable));
+      await axios.patch(`${apiEndpoint}/${specificCountry.id}`, jsonPatch, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
-
+      setCountries(countriesMutable);
+      setCombinedTotal(getCombinedTotal(countriesMutable));
     } catch (ex) {
       if (ex.response && ex.response.status === 404) {
         // country already deleted
@@ -147,32 +240,94 @@ const App = () => {
       return "Olympic Medals: " + combinedTotal;
     }
   }
+
+  const handleLogin = async (username, password) => {
+    console.log(`login: ${username} ${password}`);
+    try {
+      const resp = await axios.post(usersEndpoint, { username: username, password: password });
+      const encodedJwt = resp.data.token;
+      localStorage.setItem('token', encodedJwt);
+      console.log(encodedJwt);
+      console.log(getUser(encodedJwt));
+      setUser(getUser(encodedJwt));
+    } catch (ex) {
+      if (ex.response && (ex.response.status === 401 || ex.response.status === 400)) {
+        alert("Login failed");
+      } else if (ex.response) {
+        console.log(ex.response);
+      } else {
+        console.log("Request failed");
+        console.log(ex.response);
+      }
+    }
+  }
+
+  const getUser = (encodedJwt) => {
+    // return unencoded user / permissions
+    const decodedJwt = jwtDecode(encodedJwt);
+    console.log(decodedJwt)
+    return {
+      name: decodedJwt['username'],
+      canPost: decodedJwt['roles'].indexOf('admin') === -1 ? false : true,
+      canPatch: decodedJwt['roles'].indexOf('admin') === -1 ? false : true,
+      canDelete: decodedJwt['roles'].indexOf('admin') === -1 ? false : true,
+    };
+  }
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    console.log('logout');
+    localStorage.removeItem('token');
+    setUser({
+      name: null,
+      canPost: false,
+      canPatch: false,
+      canDelete: false
+    });
+    return false;
+  }
+
+
   return (
     <div className="App">
+      <Router>
+        {user.name ?
+          <span className='logout'><a href="/" onClick={handleLogout} className='logoutLink'>Logout</a> [{user.name}]</span>
+          :
+          <Link to="/login" className='loginLink'>Login</Link>
+        }
+        <Box sx={{
+          height: 50,
+          backgroundColor: 'primary.dark',
+          alignItems: 'center',
+          justifyContent: "center",
+          display: "flex",
+        }}>
+          <Routes>
 
-      <Box sx={{
-        height: 50,
-        backgroundColor: 'primary.dark',
-        alignItems: 'center',
-        justifyContent: "center",
-        display: "flex",
-      }}>
-        <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
-          {setHeaderTotal()}
-        </Typography>
-      </Box>
-      <Container>
-        {(countries || []).map(country =>
-          <Country
-            key={country.id}
-            country={country}
-            changeMedal={changeMedal}
-            deleteCountry={deleteCountry.bind(this)}
-          />)}
-      </Container>
-      <NewCountry
-        onAdd={handleAdd}
-      />
+
+            <Route exact path="/login" element={<Login onLogin={handleLogin} />}></Route>
+
+
+          </Routes>
+          <Typography fontWeight="fontWeightBold" variant="h5" component="div" sx={{ color: '#000000' }}>
+            {setHeaderTotal()}
+          </Typography>
+        </Box>
+        <Container>
+          {(countries || []).map(country =>
+            <Country
+              key={country.id}
+              country={country}
+              changeMedal={changeMedal}
+              deleteCountry={deleteCountry.bind(this)}
+              canDelete={ user.canDelete }
+              canPatch={ user.canPatch }
+            />)}
+        </Container>
+        { user.canPost && <NewCountry onAdd={ handleAdd } /> }
+      </Router>
+
     </div>
   );
 }

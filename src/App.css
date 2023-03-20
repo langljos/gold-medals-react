@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.loginLink, .logout {
+  color: #fff;
+  position:absolute;
+  top: 8px;
+  left: 8px;
+}
+
+.logoutLink {
+  color: #fff;
+}

@@ -21,20 +21,30 @@ class Medal extends Component {
     const countryName = this.props.countryName
     const changeMedal = this.props.changeMedal
     const propertyName = this.props.propertyName;
+    const canPatch = this.props.canPatch;
 
     return (
 
       <CardContent>
         <Grid container>
-          <Grid item xs={8}>
-            <Typography variant="h5" sx={{ color: this.setColor(medal.type) }}>{medal.type}: {medal.total}</Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Typography fontWeight="fontWeightBold">
-              <AddBoxOutlinedIcon sx={{ color: '#00FF00' }} className='Medal' onClick={() => changeMedal(countryName, propertyName, 1)}></AddBoxOutlinedIcon>
-              <IndeterminateCheckBoxOutlinedIcon sx={{ color: '#FF0000' }} className='Medal' onClick={() => changeMedal(countryName, propertyName, -1)}></IndeterminateCheckBoxOutlinedIcon>
-            </Typography>
-          </Grid>
+          {canPatch &&
+            <Grid item xs={8}>
+              <Typography variant="h5" sx={{ color: this.setColor(medal.type) }}>{medal.type}: {medal.total}</Typography>
+            </Grid>
+          }
+          {!canPatch &&
+            <Grid item xs={12}>
+              <Typography variant="h5" sx={{ color: this.setColor(medal.type) }}>{medal.type}: {medal.total}</Typography>
+            </Grid>
+          }
+          {canPatch &&
+            <Grid item xs={4}>
+              <Typography fontWeight="fontWeightBold">
+                <AddBoxOutlinedIcon sx={{ color: '#00FF00' }} className='Medal' onClick={() => changeMedal(countryName, propertyName, 1)}></AddBoxOutlinedIcon>
+                <IndeterminateCheckBoxOutlinedIcon sx={{ color: '#FF0000' }} className='Medal' onClick={() => changeMedal(countryName, propertyName, -1)}></IndeterminateCheckBoxOutlinedIcon>
+              </Typography>
+            </Grid>
+          }
         </Grid>
       </CardContent>
     );
