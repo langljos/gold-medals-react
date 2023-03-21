@@ -99,19 +99,13 @@ const App = () => {
       return;
     }
 
-    //  = await axios.post(apiEndpoint, country);
-
-
-
     try {
-      const { data: postCountry } = await axios.post(apiEndpoint, {
-        country: country
-      }, {
+      await axios.post(apiEndpoint + '/', country, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      mutCountries.push(postCountry);
+      mutCountries.push(country);
 
       setCountries(mutCountries);
       setCombinedTotal(getCombinedTotal(mutCountries));
@@ -124,36 +118,12 @@ const App = () => {
         console.log("Request failed");
       }
     }
-
-
-
-
-    // const { data: postCountry } = await axios.post(apiEndpoint, {
-    //   country: country
-    // }, {
-    //   headers: {
-    //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-    //   }
-    // });
-
-
-    // mutCountries.push(postCountry);
-
-    // setCountries(mutCountries);
-    // setCombinedTotal(getCombinedTotal(mutCountries));
   }
 
   const deleteCountry = async (id) => {
-    // await axios.delete(`${apiEndpoint}/${id}`, {
-    //   headers: {
-    //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-    //   }
-    // });
     console.log('token')
-    console.log(localStorage.getItem('token'))
-
     try {
-      await axios.delete(`${apiEndpoint}/${id}`, {
+      await axios.delete(`${apiEndpoint}/${id}/`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -162,6 +132,8 @@ const App = () => {
       setCountries(mutCountries);
       setCombinedTotal(getCombinedTotal(mutCountries));
     } catch (ex) {
+      console.log('error')
+      console.log(ex)
       if (ex.response && ex.response.status === 404) {
         // country already deleted
         console.log("The record does not exist - it may have already been deleted");
@@ -175,18 +147,6 @@ const App = () => {
         }
       }
     }
-
-
-
-
-
-
-
-
-
-
-
-
   }
 
   const getCombinedTotal = (countries) => {
@@ -210,8 +170,9 @@ const App = () => {
     console.log(`json patch for id: ${specificCountry.id}: ${JSON.stringify(jsonPatch)}`);
 
     try {
-      await axios.patch(`${apiEndpoint}/${specificCountry.id}`, jsonPatch, {
+      await axios.patch(`${apiEndpoint}/${specificCountry.id}/`, jsonPatch, {
         headers: {
+          'Access-Control-Allow-Origin': '*',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
@@ -242,13 +203,10 @@ const App = () => {
   }
 
   const handleLogin = async (username, password) => {
-    console.log(`login: ${username} ${password}`);
     try {
       const resp = await axios.post(usersEndpoint, { username: username, password: password });
       const encodedJwt = resp.data.token;
       localStorage.setItem('token', encodedJwt);
-      console.log(encodedJwt);
-      console.log(getUser(encodedJwt));
       setUser(getUser(encodedJwt));
     } catch (ex) {
       if (ex.response && (ex.response.status === 401 || ex.response.status === 400)) {
@@ -265,7 +223,6 @@ const App = () => {
   const getUser = (encodedJwt) => {
     // return unencoded user / permissions
     const decodedJwt = jwtDecode(encodedJwt);
-    console.log(decodedJwt)
     return {
       name: decodedJwt['username'],
       canPost: decodedJwt['roles'].indexOf('admin') === -1 ? false : true,
@@ -321,11 +278,11 @@ const App = () => {
               country={country}
               changeMedal={changeMedal}
               deleteCountry={deleteCountry.bind(this)}
-              canDelete={ user.canDelete }
-              canPatch={ user.canPatch }
+              canDelete={user.canDelete}
+              canPatch={user.canPatch}
             />)}
         </Container>
-        { user.canPost && <NewCountry onAdd={ handleAdd } /> }
+        {user.canPost && <NewCountry onAdd={handleAdd} />}
       </Router>
 
     </div>
