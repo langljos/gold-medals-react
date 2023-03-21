@@ -100,12 +100,12 @@ const App = () => {
     }
 
     try {
-      await axios.post(apiEndpoint + '/', country, {
+      var { data: postCountry } = await axios.post(apiEndpoint + '/', country, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      mutCountries.push(country);
+      mutCountries.push(postCountry);
 
       setCountries(mutCountries);
       setCombinedTotal(getCombinedTotal(mutCountries));
