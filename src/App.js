@@ -60,10 +60,10 @@ const App = () => {
           console.log('Connected!')
 
           connection.on('ReceiveAddMessage', country => {
+
             console.log(`Add: ${country.name}`);
             let mutableCountries = [...latestCountries.current];
             mutableCountries = mutableCountries.concat(country);
-
             setCountries(mutableCountries);
             setCombinedTotal(getCombinedTotal(mutableCountries));
           });
@@ -93,22 +93,19 @@ const App = () => {
 
 
   const addCountry = async (country) => {
-    let mutCountries = countries;
+    let mutCountries = [...latestCountries.current];
     if (mutCountries.find(c => c.name.toLowerCase() === country.name.toLowerCase())) {
       alert("Please enter a unique country name.")
       return;
     }
 
     try {
-      var { data: postCountry } = await axios.post(apiEndpoint + '/', country, {
+      await axios.post(apiEndpoint + '/', country, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      mutCountries.push(postCountry);
-
-      setCountries(mutCountries);
-      setCombinedTotal(getCombinedTotal(mutCountries));
+      
     } catch (ex) {
       if (ex.response && (ex.response.status === 401 || ex.response.status === 403)) {
         alert("You are not authorized to complete this request");
